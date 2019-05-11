@@ -640,8 +640,10 @@ namespace winrt::TerminalApp::implementation
 
         tabViewItem.PointerPressed({ this, &App::_OnTabClick });
 
-        // This is one way to set the tab's selected background color.
-        //   tabViewItem.Resources().Insert(winrt::box_value(L"TabViewItemHeaderBackgroundSelected"), a Brush?);
+        auto bg = settings.DefaultBackground();
+        auto color = winrt::Windows::UI::ColorHelper::FromArgb(255 , GetRValue(bg), GetGValue(bg), GetBValue(bg));
+        winrt::Windows::UI::Xaml::Media::SolidColorBrush brush{ color };
+        tabViewItem.Resources().Insert(winrt::box_value(L"TabViewItemHeaderBackgroundSelected"), winrt::box_value(brush));
 
         // This kicks off TabView::SelectionChanged, in response to which we'll attach the terminal's
         // Xaml control to the Xaml root.
