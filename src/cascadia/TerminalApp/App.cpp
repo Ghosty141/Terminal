@@ -640,14 +640,35 @@ namespace winrt::TerminalApp::implementation
 
         tabViewItem.PointerPressed({ this, &App::_OnTabClick });
 
-        auto bg = settings.DefaultBackground();
-        auto color = winrt::Windows::UI::ColorHelper::FromArgb(255 , GetRValue(bg), GetGValue(bg), GetBValue(bg));
-        winrt::Windows::UI::Xaml::Media::SolidColorBrush brush{ color };
+        // Set the background color of the selected tab
+        Media::IBrush brush = _GetTabBackgroundBrush(settings);
         tabViewItem.Resources().Insert(winrt::box_value(L"TabViewItemHeaderBackgroundSelected"), winrt::box_value(brush));
 
         // This kicks off TabView::SelectionChanged, in response to which we'll attach the terminal's
         // Xaml control to the Xaml root.
         _tabView.SelectedItem(tabViewItem);
+    }
+
+    // Method Description:
+    // - Creates the brush to use for the tab background
+    // Return Value:
+    // - the correct brush depending on if acrylic should be used
+    Media::IBrush App::_GetTabBackgroundBrush(const winrt::Microsoft::Terminal::Settings::TerminalSettings& settings)
+    {
+        uint32_t bg = settings.DefaultBackground();
+        Windows::UI::Color color = winrt::Windows::UI::ColorHelper::FromArgb(255, GetRValue(bg), GetGValue(bg), GetBValue(bg));
+        if (settings.UseAcrylic()) {
+            winrt::Windows::UI::Xaml::Media::AcrylicBrush brush;
+            brush.BackgroundSource(Media::AcrylicBackgroundSource::HostBackdrop);
+            brush.TintOpacity(settings.TintOpacity());
+            brush.TintColor(color);
+            return brush;
+        }
+        else
+        {
+            winrt::Windows::UI::Xaml::Media::SolidColorBrush brush { color };
+            return brush;
+        }
     }
 
     // Method Description:

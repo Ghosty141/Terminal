@@ -88,6 +88,7 @@ namespace winrt::TerminalApp::implementation
         void _CloseFocusedTab();
         void _SelectNextTab(const bool bMoveRight);
         void _SelectTab(const int tabIndex);
+        Windows::UI::Xaml::Media::IBrush _GetTabBackgroundBrush(const winrt::Microsoft::Terminal::Settings::TerminalSettings& settings);
 
         void _SetFocusedTabIndex(int tabIndex);
         int _GetFocusedTabIndex() const;
